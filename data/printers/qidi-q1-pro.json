@@ -1,0 +1,156 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "qidi-q1-pro",
+  "brand": "qidi",
+  "model": "Q1 Pro",
+  "description": "Qidi Q1 Pro - Qidi FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "corexy",
+  "build_volume": {
+    "x": 245,
+    "y": 245,
+    "z": 240,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "spring_steel",
+      "textured_pei"
+    ],
+    "default_surface": "spring_steel",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 600.0,
+      "y": 600.0,
+      "z": 10.0,
+      "e": 30.0,
+      "travel": 600.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 20000.0,
+      "y": 20000.0,
+      "z": 500.0,
+      "e": 5000.0,
+      "extruding": 20000.0,
+      "retracting": 5000.0,
+      "travel": 9000.0
+    },
+    "max_jerk": {
+      "x": 8.0,
+      "y": 8.0,
+      "z": 3.0,
+      "e": 2.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "pressure_advance": true,
+    "input_shaping": true,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "M141 S0\nM104 S0\nM140 S0\nG1 E-3 F1800\nG0 Z{min(max_print_height, max_layer_z + 3)} F600\nG0 X0 Y0 F12000\n{if max_layer_z < max_print_height / 2}G1 Z{max_print_height / 2 + 10} F600{else}G1 Z{min(max_print_height, max_layer_z + 3)}{endif}",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.2": {
+      "diameter": 0.2,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.04,
+      "max_layer_height": 0.14,
+      "retraction": {
+        "length": 0.4,
+        "speed": 30.0,
+        "deretraction_speed": 30,
+        "z_hop": 0.4,
+        "minimum_travel": 1.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperatures]\nM83\nM140 S[hot_plate_temp_initial_layer]\nM104 S[nozzle_temperature_initial_layer]\nG4 P3000\nG0 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85),0)} Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0)} Z5 F6000\nG0 Z[initial_layer_print_height] F600\nG1 E3 F1800\nG1 X{(min(print_bed_max[0], first_layer_print_min[0] + 80))} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0)} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 85} E{83 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 3} E{82 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 3} Z0\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 6}\nG1 Z1 F600\n"
+    },
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.28,
+      "retraction": {
+        "length": 0.8,
+        "speed": 30.0,
+        "deretraction_speed": 30,
+        "z_hop": 0.4,
+        "minimum_travel": 1.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperatures]\nM83\nM140 S[hot_plate_temp_initial_layer]\nM104 S[nozzle_temperature_initial_layer]\nG4 P3000\nG0 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85),0)} Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0)} Z5 F6000\nG0 Z[initial_layer_print_height] F600\nG1 E3 F1800\nG1 X{(min(print_bed_max[0], first_layer_print_min[0] + 80))} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0)} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 85} E{83 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 3} E{82 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 3} Z0\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 6}\nG1 Z1 F600\n"
+    },
+    "0.6": {
+      "diameter": 0.6,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.12,
+      "max_layer_height": 0.42,
+      "retraction": {
+        "length": 1.4,
+        "speed": 30.0,
+        "deretraction_speed": 30,
+        "z_hop": 0.4,
+        "minimum_travel": 3.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperatures]\nM83\nM140 S[hot_plate_temp_initial_layer]\nM104 S[nozzle_temperature_initial_layer]\nG4 P3000\nG0 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85),0)} Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0)} Z5 F6000\nG0 Z[initial_layer_print_height] F600\nG1 E3 F1800\nG1 X{(min(print_bed_max[0], first_layer_print_min[0] + 80))} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0)} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 85} E{83 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 3} E{82 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 3} Z0\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 6}\nG1 Z1 F600\n"
+    },
+    "0.8": {
+      "diameter": 0.8,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.16,
+      "max_layer_height": 0.56,
+      "retraction": {
+        "length": 3.0,
+        "speed": 30.0,
+        "deretraction_speed": 30,
+        "z_hop": 0.4,
+        "minimum_travel": 1.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "PRINT_START BED=[hot_plate_temp_initial_layer] HOTEND=[nozzle_temperature_initial_layer] CHAMBER=[chamber_temperatures]\nM83\nM140 S[hot_plate_temp_initial_layer]\nM104 S[nozzle_temperature_initial_layer]\nG4 P3000\nG0 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85),0)} Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0)} Z5 F6000\nG0 Z[initial_layer_print_height] F600\nG1 E3 F1800\nG1 X{(min(print_bed_max[0], first_layer_print_min[0] + 80))} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0)} E{85 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 85} E{83 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 2} E{2 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 Y{max((min(print_bed_max[1] - 5, first_layer_print_min[1] + 80) - 85), 0) + 3} E{82 * 0.5 * initial_layer_print_height * nozzle_diameter[0]} F3000\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 3} Z0\nG1 X{max((min(print_bed_max[0], first_layer_print_min[0] + 80) - 85), 0) + 6}\nG1 Z1 F600\n"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "qidi",
+      "corexy"
+    ]
+  }
+}

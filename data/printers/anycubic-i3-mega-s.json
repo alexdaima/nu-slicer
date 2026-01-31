@@ -1,0 +1,107 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "anycubic-i3-mega-s",
+  "brand": "anycubic",
+  "model": "i3 Mega S",
+  "description": "Anycubic i3 Mega S - Anycubic FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "cartesian",
+  "build_volume": {
+    "x": 210,
+    "y": 210,
+    "z": 205,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "bowden",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "glass",
+      "ultrabase"
+    ],
+    "default_surface": "glass",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 8.0,
+      "e": 30.0,
+      "travel": 500.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 3000.0,
+      "y": 2000.0,
+      "z": 60.0,
+      "e": 10000.0,
+      "extruding": 1250.0,
+      "retracting": 1250.0,
+      "travel": 1000.0
+    },
+    "max_jerk": {
+      "x": 10.0,
+      "y": 10.0,
+      "z": 0.4,
+      "e": 5.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": false,
+    "pressure_advance": false,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "G1 E-1.0 F2100 ; retract\nG92 E0.0\nG1{if max_layer_z < printable_height} Z{z_offset+min(max_layer_z+30, printable_height)}{endif} E-34.0 F720 ; move print head up & retract filament\nG4 ; wait\nM104 S0 ; turn off temperature\nM140 S0 ; turn off heatbed\nM107 ; turn off fan\nG1 X0 Y105 F3000 ; park print head\nM84 ; disable motors",
+    "toolchange_gcode": "M600"
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "undefine",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.36,
+      "retraction": {
+        "length": 6.0,
+        "speed": 40.0,
+        "deretraction_speed": 50.0,
+        "z_hop": 0.4,
+        "minimum_travel": 1.5,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "G90 ; use absolute coordinates\nM83 ; extruder relative mode\nM204 S[machine_max_acceleration_extruding] T[machine_max_acceleration_retracting]\nM104 S[nozzle_temperature_initial_layer] ; set extruder temp\nM140 S[bed_temperature_initial_layer_single] ; set bed temp\nG28 ; home all\nG1 Y1.0 Z0.3 F1000 ; move print head up\nM190 S[bed_temperature_initial_layer_single] ; wait for bed temp\nM109 S[nozzle_temperature_initial_layer] ; wait for extruder temp\nG92 E0.0\n; initial load\nG1 X205.0 E19 F1000\nG1 Y1.6\nG1 X5.0 E19 F1000\nG92 E0.0\n; intro line\nG1 Y2.0 Z0.2 F1000\nG1 X65.0 E9.0 F1000\nG1 X105.0 E12.5 F1000\nG92 E0.0"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "anycubic",
+      "cartesian"
+    ]
+  }
+}

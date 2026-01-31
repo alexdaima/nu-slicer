@@ -1,0 +1,105 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "troodon-2-0-rrf",
+  "brand": "vivedino",
+  "model": "Troodon 2.0 - RRF",
+  "description": "Troodon 2.0 - RRF - Vivedino FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "corexy",
+  "build_volume": {
+    "x": 350,
+    "y": 350,
+    "z": 330,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "spring_steel"
+    ],
+    "default_surface": "spring_steel",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 12.0,
+      "e": 25.0,
+      "travel": 500.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 20000.0,
+      "y": 20000.0,
+      "z": 500.0,
+      "e": 5000.0,
+      "extruding": 20000.0,
+      "retracting": 5000.0,
+      "travel": 20000.0
+    },
+    "max_jerk": {
+      "x": 9.0,
+      "y": 9.0,
+      "z": 0.2,
+      "e": 2.5
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "M0",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "undefine",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.32,
+      "retraction": {
+        "length": 0.8,
+        "speed": 30.0,
+        "deretraction_speed": 30.0,
+        "z_hop": 0.4,
+        "minimum_travel": 1.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "M104 S0\nM190 S0\nM98 P\"start_print.g\" A[first_layer_bed_temperature] B\"[filament_type]\" C[first_layer_temperature] D[nozzle_diameter] E{first_layer_print_min[0]} F{first_layer_print_max[0]} H{first_layer_print_min[1]} J{first_layer_print_max[1]}"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "vivedino",
+      "corexy"
+    ]
+  }
+}

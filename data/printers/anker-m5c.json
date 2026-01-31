@@ -1,0 +1,107 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "anker-m5c",
+  "brand": "anker",
+  "model": "M5C",
+  "description": "Anker M5C - Anker FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "cartesian",
+  "build_volume": {
+    "x": 220,
+    "y": 220,
+    "z": 250,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "spring_steel"
+    ],
+    "default_surface": "spring_steel",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 600.0,
+      "y": 600.0,
+      "z": 80.0,
+      "e": 50.0,
+      "travel": 600.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 6000.0,
+      "y": 6000.0,
+      "z": 100.0,
+      "e": 4000.0,
+      "extruding": 6000.0,
+      "retracting": 6000.0,
+      "travel": 6000.0
+    },
+    "max_jerk": {
+      "x": 15.0,
+      "y": 15.0,
+      "z": 0.3,
+      "e": 18.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "pressure_advance": true,
+    "input_shaping": false,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "M104 S0\nM140 S0\n;Retract the filament\nG92 E1\nG1 E-1 F300\nG28 X0 Y0\nM84",
+    "toolchange_gcode": ";FILAMENT CHANGE (by Lukagra)\nG91\nG1 Z10 F600\nG90\nM600\nG91\nG1 E-3 F1200\nG1 Z-10 F600\nG90"
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.05,
+      "max_layer_height": 0.32,
+      "retraction": {
+        "length": 1.5,
+        "speed": 60.0,
+        "deretraction_speed": 60.0,
+        "z_hop": 0.4,
+        "minimum_travel": 3.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "M4899 T3 ; Enable v3 jerk and S-curve acceleration \nM104 S{first_layer_temperature[0]-30} ; Anti-ooze - Set hotend temp to 30 degrees less than target\nM190 S{first_layer_bed_temperature[0]} ; set and wait for bed temp to stabilize\nM109 S{first_layer_temperature[0]} ; set final nozzle temp to stabilize\nG28 ;Home"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "anker",
+      "cartesian"
+    ]
+  }
+}

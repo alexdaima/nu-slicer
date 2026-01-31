@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://helio-additive.com/slicer/schemas/filament.schema.json",
+  "title": "Filament Profile",
+  "description": "A filament material profile",
+  "type": "object",
+  "required": [
+    "id",
+    "brand",
+    "material",
+    "name"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "brand": {
+      "type": "string"
+    },
+    "material": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object"
+    },
+    "physical_properties": {
+      "type": "object"
+    },
+    "temperatures": {
+      "type": "object"
+    },
+    "flow": {
+      "type": "object"
+    },
+    "cooling": {
+      "type": "object"
+    },
+    "retraction": {
+      "type": "object"
+    },
+    "multi_material": {
+      "type": "object"
+    },
+    "support_material": {
+      "type": "object"
+    },
+    "special_properties": {
+      "type": "object"
+    },
+    "gcode": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

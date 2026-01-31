@@ -1,0 +1,109 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "qidi-x-max",
+  "brand": "qidi",
+  "model": "X-Max",
+  "description": "Qidi X-Max - Qidi FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "corexy",
+  "build_volume": {
+    "x": 300,
+    "y": 250,
+    "z": 300,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "spring_steel",
+      "textured_pei"
+    ],
+    "default_surface": "spring_steel",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": true,
+    "heated_chamber": false,
+    "max_chamber_temperature": 60,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 12.0,
+      "e": 120.0,
+      "travel": 500.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 9000.0,
+      "y": 9000.0,
+      "z": 500.0,
+      "e": 5000.0,
+      "extruding": 1500.0,
+      "retracting": 1500.0,
+      "travel": 1500.0
+    },
+    "max_jerk": {
+      "x": 10.0,
+      "y": 10.0,
+      "z": 0.2,
+      "e": 2.5
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "pressure_advance": true,
+    "input_shaping": true,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "M104 S0\nM140 S0\n;Retract the filament\nG92 E0\nG1 E-3 F300\nG28\nM84\n",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.07,
+      "max_layer_height": 0.28,
+      "retraction": {
+        "length": 2.0,
+        "speed": 60.0,
+        "deretraction_speed": 30,
+        "z_hop": 0.4,
+        "minimum_travel": 2.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "G28\nG92 E0\nG0 X5 Y5 Z0.3 F3600\n"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "qidi",
+      "corexy",
+      "enclosed"
+    ]
+  }
+}

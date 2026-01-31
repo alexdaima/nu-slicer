@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://helio-additive.com/slicer/schemas/printer.schema.json",
+  "title": "Printer Profile",
+  "description": "A 3D printer profile with nested nozzle configurations",
+  "type": "object",
+  "required": [
+    "id",
+    "brand",
+    "model",
+    "build_volume",
+    "nozzle_configs"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "brand": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "technology": {
+      "type": "string",
+      "enum": [
+        "FFF",
+        "FDM"
+      ]
+    },
+    "structure": {
+      "type": "string",
+      "enum": [
+        "cartesian",
+        "corexy",
+        "delta",
+        "polar"
+      ]
+    },
+    "build_volume": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0
+        },
+        "z": {
+          "type": "number",
+          "minimum": 0
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "center",
+            "corner"
+          ]
+        }
+      }
+    },
+    "default_nozzle_diameter": {
+      "type": "number"
+    },
+    "extruder": {
+      "type": "object"
+    },
+    "bed": {
+      "type": "object"
+    },
+    "enclosure": {
+      "type": "object"
+    },
+    "limits": {
+      "type": "object"
+    },
+    "features": {
+      "type": "object"
+    },
+    "cooling": {
+      "type": "object"
+    },
+    "gcode": {
+      "type": "object"
+    },
+    "nozzle_configs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/nozzle_config"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "nozzle_config": {
+      "type": "object",
+      "required": [
+        "diameter"
+      ],
+      "properties": {
+        "diameter": {
+          "type": "number"
+        },
+        "nozzle_type": {
+          "type": "string"
+        },
+        "min_layer_height": {
+          "type": "number"
+        },
+        "max_layer_height": {
+          "type": "number"
+        },
+        "retraction": {
+          "type": "object"
+        },
+        "start_gcode": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

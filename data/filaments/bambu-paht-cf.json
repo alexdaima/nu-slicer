@@ -1,0 +1,98 @@
+{
+  "$schema": "../schemas/filament.schema.json",
+  "id": "bambu-paht-cf",
+  "brand": "bambu-lab",
+  "material": "PA-CF",
+  "name": "Bambu PAHT-CF",
+  "description": "When printing this filament, there's a risk of nozzle clogging, oozing, warping and low layer adhesion strength. To get better results, please refer to this wiki: Printing Tips for High Temp / Engineering materials.",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "filament_id": "GFN04"
+  },
+  "physical_properties": {
+    "diameter": 1.75,
+    "density": 1.06,
+    "spool_weight": 1000,
+    "glass_transition_temperature": 180.0,
+    "vitrification_temperature": 180.0,
+    "shrinkage": 100.0,
+    "hygroscopic": false,
+    "abrasive": true,
+    "flexible": false
+  },
+  "temperatures": {
+    "nozzle": {
+      "min": 260.0,
+      "max": 300.0,
+      "default": 290.0,
+      "first_layer": 290.0
+    },
+    "bed": {
+      "default": 100.0,
+      "first_layer": 100.0,
+      "smooth_pei": 100.0,
+      "textured_pei": 100.0,
+      "engineering_plate": 100.0,
+      "cool_plate": 0.0
+    },
+    "chamber": {
+      "recommended": 0.0,
+      "required": false
+    }
+  },
+  "flow": {
+    "ratio": 0.96,
+    "max_volumetric_speed": 8.0
+  },
+  "cooling": {
+    "fan_min_speed": 10.0,
+    "fan_max_speed": 30.0,
+    "fan_below_layer_time": 5.0,
+    "disable_fan_first_layers": 3,
+    "full_fan_speed_layer": 2,
+    "slow_down_layer_time": 2.0,
+    "slow_down_min_speed": 20.0,
+    "overhang_fan_speed": 40.0,
+    "overhang_fan_threshold": 0.0
+  },
+  "retraction": {},
+  "multi_material": {
+    "prime_volume": 45.0,
+    "minimal_purge_on_wipe_tower": 15.0
+  },
+  "support_material": {
+    "is_support_material": false,
+    "soluble": false
+  },
+  "special_properties": {
+    "translucent": false,
+    "glow_in_dark": false,
+    "metallic": false,
+    "silk": false,
+    "matte": false,
+    "wood_filled": false,
+    "carbon_fiber": true,
+    "glass_fiber": false,
+    "high_speed": false,
+    "requires_enclosure": false,
+    "requires_hardened_nozzle": true,
+    "requires_drying": false,
+    "drying_temperature": 80,
+    "drying_time": 8
+  },
+  "gcode": {
+    "start_gcode": "; Filament gcode\n{if activate_air_filtration[current_extruder] && support_air_filtration}\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \n{endif}",
+    "end_gcode": "; filament end gcode \n\n"
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "pa-cf",
+      "bambu-lab",
+      "reinforced",
+      "abrasive"
+    ]
+  }
+}

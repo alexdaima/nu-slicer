@@ -1,0 +1,97 @@
+{
+  "$schema": "../schemas/filament.schema.json",
+  "id": "bambu-asa",
+  "brand": "bambu-lab",
+  "material": "ASA",
+  "name": "Bambu ASA",
+  "description": "When printing this filament, there's a risk of warping and low layer adhesion strength. To get better results, please refer to this wiki: Printing Tips for High Temp / Engineering materials.",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "filament_id": "GFB01"
+  },
+  "physical_properties": {
+    "diameter": 1.75,
+    "density": 1.05,
+    "spool_weight": 1000,
+    "glass_transition_temperature": 100.0,
+    "vitrification_temperature": 100.0,
+    "shrinkage": 100.0,
+    "hygroscopic": false,
+    "abrasive": false,
+    "flexible": false
+  },
+  "temperatures": {
+    "nozzle": {
+      "min": 240.0,
+      "max": 280.0,
+      "default": 270.0,
+      "first_layer": 270.0
+    },
+    "bed": {
+      "default": 100.0,
+      "first_layer": 100.0,
+      "smooth_pei": 100.0,
+      "textured_pei": 100.0,
+      "engineering_plate": 100.0,
+      "cool_plate": 0.0
+    },
+    "chamber": {
+      "recommended": 0.0,
+      "required": false
+    }
+  },
+  "flow": {
+    "ratio": 0.95,
+    "max_volumetric_speed": 18.0
+  },
+  "cooling": {
+    "fan_min_speed": 10.0,
+    "fan_max_speed": 35.0,
+    "fan_below_layer_time": 35.0,
+    "disable_fan_first_layers": 3,
+    "full_fan_speed_layer": 0,
+    "slow_down_layer_time": 12.0,
+    "slow_down_min_speed": 20.0,
+    "overhang_fan_speed": 80.0,
+    "overhang_fan_threshold": 25.0
+  },
+  "retraction": {},
+  "multi_material": {
+    "prime_volume": 45.0,
+    "minimal_purge_on_wipe_tower": 15.0
+  },
+  "support_material": {
+    "is_support_material": false,
+    "soluble": false
+  },
+  "special_properties": {
+    "translucent": false,
+    "glow_in_dark": false,
+    "metallic": false,
+    "silk": false,
+    "matte": false,
+    "wood_filled": false,
+    "carbon_fiber": false,
+    "glass_fiber": false,
+    "high_speed": false,
+    "requires_enclosure": true,
+    "requires_hardened_nozzle": false,
+    "requires_drying": false,
+    "drying_temperature": 80,
+    "drying_time": 8
+  },
+  "gcode": {
+    "start_gcode": "; Filament gcode\n{if activate_air_filtration[current_extruder] && support_air_filtration}\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \n{endif}",
+    "end_gcode": "; filament end gcode \n\n"
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "asa",
+      "bambu-lab",
+      "requires-enclosure"
+    ]
+  }
+}

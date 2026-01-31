@@ -1,0 +1,113 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "voron-2-4-250",
+  "brand": "voron",
+  "model": "2.4 250",
+  "description": "Voron 2.4 250 - Voron FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "corexy",
+  "build_volume": {
+    "x": 250,
+    "y": 250,
+    "z": 225,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "smooth_pei",
+      "textured_pei"
+    ],
+    "default_surface": "textured_pei",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": true,
+    "heated_chamber": false,
+    "max_chamber_temperature": 60,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 12.0,
+      "e": 25.0,
+      "travel": 500.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 20000.0,
+      "y": 20000.0,
+      "z": 500.0,
+      "e": 5000.0,
+      "extruding": 20000.0,
+      "retracting": 5000.0,
+      "travel": 9000.0
+    },
+    "max_jerk": {
+      "x": 12.0,
+      "y": 12.0,
+      "z": 0.2,
+      "e": 2.5
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "pressure_advance": true,
+    "input_shaping": true,
+    "arc_support": true,
+    "firmware_retraction": false,
+    "multi_material": false,
+    "filament_runout_sensor": true,
+    "power_loss_recovery": false
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "klipper",
+    "end_gcode": "PRINT_END",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "undefine",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.32,
+      "retraction": {
+        "length": 0.8,
+        "speed": 30.0,
+        "deretraction_speed": 30.0,
+        "z_hop": 0.4,
+        "minimum_travel": 1.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "M190 S[bed_temperature_initial_layer_single]\nM109 S[nozzle_temperature_initial_layer]\nPRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single]\n; You can use following code instead if your PRINT_START macro support Chamber and print area bedmesh\n; PRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single] Chamber=[chamber_temperature] PRINT_MIN={first_layer_print_min[0]},{first_layer_print_min[1]} PRINT_MAX={first_layer_print_max[0]},{first_layer_print_max[1]}"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "voron",
+      "corexy",
+      "enclosed"
+    ]
+  }
+}

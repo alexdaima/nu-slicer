@@ -1,0 +1,515 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://helio-additive.com/slicer/schemas/slice_config.schema.json",
+  "title": "Slice Configuration",
+  "description": "Configuration for a single slice job combining printer, filament, and print settings",
+  "type": "object",
+  "required": ["printer_id", "filament_id"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the JSON schema"
+    },
+    "printer_id": {
+      "type": "string",
+      "description": "ID of the printer profile to use (e.g., 'bambu-lab-h2d')",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["bambu-lab-h2d", "bambu-lab-x1-carbon", "prusa-mk4"]
+    },
+    "filament_id": {
+      "type": "string",
+      "description": "ID of the filament profile to use (e.g., 'bambu-pla-basic')",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["bambu-pla-basic", "generic-pla", "bambu-abs"]
+    },
+    "nozzle_diameter": {
+      "type": "number",
+      "description": "Nozzle diameter in mm (defaults to printer's default_nozzle_diameter)",
+      "minimum": 0.1,
+      "maximum": 2.0,
+      "examples": [0.2, 0.4, 0.6, 0.8]
+    },
+    "quality": {
+      "$ref": "#/$defs/quality_settings"
+    },
+    "speed": {
+      "$ref": "#/$defs/speed_settings"
+    },
+    "perimeters": {
+      "$ref": "#/$defs/perimeter_settings"
+    },
+    "infill": {
+      "$ref": "#/$defs/infill_settings"
+    },
+    "support": {
+      "$ref": "#/$defs/support_settings"
+    },
+    "adhesion": {
+      "$ref": "#/$defs/adhesion_settings"
+    },
+    "gcode": {
+      "$ref": "#/$defs/gcode_settings"
+    },
+    "advanced": {
+      "$ref": "#/$defs/advanced_settings"
+    },
+    "custom": {
+      "type": "object",
+      "description": "Custom key-value pairs for extensibility",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "quality_settings": {
+      "type": "object",
+      "description": "Quality-related settings (layer heights, resolution)",
+      "properties": {
+        "layer_height": {
+          "type": "number",
+          "description": "Layer height in mm",
+          "minimum": 0.04,
+          "maximum": 1.0,
+          "examples": [0.1, 0.2, 0.3]
+        },
+        "first_layer_height": {
+          "type": "number",
+          "description": "First layer height in mm (defaults to layer_height)",
+          "minimum": 0.04,
+          "maximum": 1.0,
+          "examples": [0.2, 0.25, 0.3]
+        },
+        "resolution": {
+          "type": "number",
+          "description": "G-code output resolution in mm",
+          "minimum": 0.001,
+          "maximum": 0.5,
+          "default": 0.0125
+        },
+        "slice_closing_radius": {
+          "type": "number",
+          "description": "Radius for closing small gaps in slices (mm)",
+          "minimum": 0,
+          "maximum": 1.0,
+          "default": 0.049
+        },
+        "xy_size_compensation": {
+          "type": "number",
+          "description": "XY size compensation in mm (positive = larger)",
+          "minimum": -2.0,
+          "maximum": 2.0,
+          "default": 0
+        },
+        "elephant_foot_compensation": {
+          "type": "number",
+          "description": "First layer elephant foot compensation in mm",
+          "minimum": 0,
+          "maximum": 2.0,
+          "default": 0
+        }
+      }
+    },
+    "speed_settings": {
+      "type": "object",
+      "description": "Speed-related settings in mm/s",
+      "properties": {
+        "print_speed": {
+          "type": "number",
+          "description": "Default print speed in mm/s",
+          "minimum": 1,
+          "maximum": 1000,
+          "examples": [60, 100, 200]
+        },
+        "travel_speed": {
+          "type": "number",
+          "description": "Travel move speed in mm/s",
+          "minimum": 1,
+          "maximum": 1000,
+          "examples": [150, 250, 500]
+        },
+        "first_layer_speed": {
+          "type": "number",
+          "description": "First layer speed in mm/s",
+          "minimum": 1,
+          "maximum": 100,
+          "examples": [20, 30]
+        },
+        "perimeter_speed": {
+          "type": "number",
+          "description": "Perimeter speed in mm/s",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "external_perimeter_speed": {
+          "type": "number",
+          "description": "External perimeter speed in mm/s",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "infill_speed": {
+          "type": "number",
+          "description": "Infill speed in mm/s",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "solid_infill_speed": {
+          "type": "number",
+          "description": "Solid infill speed in mm/s",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "top_solid_infill_speed": {
+          "type": "number",
+          "description": "Top solid infill speed in mm/s",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "bridge_speed": {
+          "type": "number",
+          "description": "Bridge speed in mm/s",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 30
+        },
+        "gap_fill_speed": {
+          "type": "number",
+          "description": "Gap fill speed in mm/s",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20
+        }
+      }
+    },
+    "perimeter_settings": {
+      "type": "object",
+      "description": "Perimeter/shell settings",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Number of perimeter loops",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 3
+        },
+        "top_solid_layers": {
+          "type": "integer",
+          "description": "Number of top solid layers",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 4
+        },
+        "bottom_solid_layers": {
+          "type": "integer",
+          "description": "Number of bottom solid layers",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 4
+        },
+        "mode": {
+          "type": "string",
+          "description": "Perimeter generation mode",
+          "enum": ["classic", "arachne"],
+          "default": "classic"
+        },
+        "thin_walls": {
+          "type": "boolean",
+          "description": "Enable thin walls detection",
+          "default": true
+        },
+        "gap_fill": {
+          "type": "boolean",
+          "description": "Enable gap fill",
+          "default": true
+        },
+        "overhangs": {
+          "type": "boolean",
+          "description": "Enable overhang detection",
+          "default": true
+        },
+        "seam_position": {
+          "type": "string",
+          "description": "Seam position preference",
+          "enum": ["random", "aligned", "rear", "nearest", "hidden"],
+          "default": "aligned"
+        },
+        "fuzzy_skin": {
+          "type": "string",
+          "description": "Fuzzy skin mode",
+          "enum": ["none", "outside", "all"],
+          "default": "none"
+        },
+        "fuzzy_skin_thickness": {
+          "type": "number",
+          "description": "Fuzzy skin thickness in mm",
+          "minimum": 0,
+          "maximum": 1.0,
+          "default": 0.3
+        },
+        "fuzzy_skin_point_distance": {
+          "type": "number",
+          "description": "Fuzzy skin point distance in mm",
+          "minimum": 0.1,
+          "maximum": 5.0,
+          "default": 0.8
+        }
+      }
+    },
+    "infill_settings": {
+      "type": "object",
+      "description": "Infill settings",
+      "properties": {
+        "density": {
+          "type": "number",
+          "description": "Infill density as percentage (0-100)",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 15,
+          "examples": [0, 10, 15, 20, 50, 100]
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Infill pattern",
+          "enum": [
+            "rectilinear",
+            "grid",
+            "triangles",
+            "cubic",
+            "honeycomb",
+            "honeycomb3d",
+            "gyroid",
+            "concentric",
+            "crosshatch",
+            "lightning",
+            "adaptive",
+            "adaptive_cubic"
+          ],
+          "default": "rectilinear"
+        },
+        "angle": {
+          "type": "number",
+          "description": "Infill angle in degrees",
+          "minimum": 0,
+          "maximum": 360,
+          "default": 45
+        },
+        "solid_threshold_area": {
+          "type": "number",
+          "description": "Areas smaller than this will be filled with solid infill (mm²)",
+          "minimum": 0,
+          "default": 70
+        }
+      }
+    },
+    "support_settings": {
+      "type": "object",
+      "description": "Support structure settings",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable support structures",
+          "default": false
+        },
+        "type": {
+          "type": "string",
+          "description": "Support type",
+          "enum": ["normal", "tree", "hybrid"],
+          "default": "normal"
+        },
+        "threshold_angle": {
+          "type": "number",
+          "description": "Overhang threshold angle in degrees",
+          "minimum": 0,
+          "maximum": 90,
+          "default": 45
+        },
+        "density": {
+          "type": "number",
+          "description": "Support density as fraction (0.0-1.0)",
+          "minimum": 0,
+          "maximum": 1.0,
+          "default": 0.15
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Support pattern",
+          "enum": ["grid", "lines", "honeycomb", "gyroid", "lightning"],
+          "default": "grid"
+        },
+        "buildplate_only": {
+          "type": "boolean",
+          "description": "Only generate support touching the build plate",
+          "default": false
+        },
+        "z_distance": {
+          "type": "number",
+          "description": "Support Z distance from model in mm",
+          "minimum": 0,
+          "maximum": 5.0,
+          "default": 0.2
+        },
+        "xy_distance": {
+          "type": "number",
+          "description": "Support XY distance from model in mm",
+          "minimum": 0,
+          "maximum": 5.0,
+          "default": 0.4
+        },
+        "interface_layers": {
+          "type": "integer",
+          "description": "Number of support interface layers",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 2
+        }
+      }
+    },
+    "adhesion_settings": {
+      "type": "object",
+      "description": "Bed adhesion settings (brim, skirt, raft)",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Adhesion type",
+          "enum": ["none", "skirt", "brim", "raft"],
+          "default": "skirt"
+        },
+        "skirt_loops": {
+          "type": "integer",
+          "description": "Number of skirt loops",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 3
+        },
+        "skirt_distance": {
+          "type": "number",
+          "description": "Skirt distance from object in mm",
+          "minimum": 0,
+          "maximum": 50,
+          "default": 6
+        },
+        "skirt_min_length": {
+          "type": "number",
+          "description": "Skirt minimum extrusion length in mm",
+          "minimum": 0,
+          "default": 0
+        },
+        "brim_width": {
+          "type": "number",
+          "description": "Brim width in mm (0 = no brim)",
+          "minimum": 0,
+          "maximum": 50,
+          "default": 0
+        }
+      }
+    },
+    "gcode_settings": {
+      "type": "object",
+      "description": "G-code generation settings",
+      "properties": {
+        "use_relative_e": {
+          "type": "boolean",
+          "description": "Use relative E coordinates (M83)",
+          "default": true
+        },
+        "arc_fitting": {
+          "type": "boolean",
+          "description": "Enable arc fitting (G2/G3 commands)",
+          "default": true
+        },
+        "arc_fitting_tolerance": {
+          "type": "number",
+          "description": "Arc fitting tolerance in mm",
+          "minimum": 0.001,
+          "maximum": 1.0,
+          "default": 0.05
+        },
+        "arc_fitting_min_radius": {
+          "type": "number",
+          "description": "Minimum arc radius in mm",
+          "minimum": 0.1,
+          "maximum": 10,
+          "default": 0.5
+        },
+        "arc_fitting_max_radius": {
+          "type": "number",
+          "description": "Maximum arc radius in mm",
+          "minimum": 10,
+          "maximum": 10000,
+          "default": 1000
+        },
+        "spiral_vase": {
+          "type": "boolean",
+          "description": "Enable spiral/vase mode",
+          "default": false
+        }
+      }
+    },
+    "advanced_settings": {
+      "type": "object",
+      "description": "Advanced/experimental settings",
+      "properties": {
+        "avoid_crossing_perimeters": {
+          "type": "boolean",
+          "description": "Avoid crossing perimeters for travel moves",
+          "default": true
+        },
+        "avoid_crossing_max_detour": {
+          "type": "number",
+          "description": "Maximum detour ratio for avoid crossing perimeters",
+          "minimum": 1.0,
+          "maximum": 10.0,
+          "default": 2.0
+        },
+        "bridge_detection": {
+          "type": "boolean",
+          "description": "Enable bridge detection",
+          "default": true
+        },
+        "bridge_flow_multiplier": {
+          "type": "number",
+          "description": "Bridge flow multiplier",
+          "minimum": 0.5,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        "bridge_speed_multiplier": {
+          "type": "number",
+          "description": "Bridge speed multiplier",
+          "minimum": 0.1,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        "extrusion_multiplier": {
+          "type": "number",
+          "description": "Extrusion multiplier (flow rate adjustment)",
+          "minimum": 0.5,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        "retract_length": {
+          "type": "number",
+          "description": "Retraction length override in mm",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "retract_speed": {
+          "type": "number",
+          "description": "Retraction speed override in mm/s",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "retract_lift": {
+          "type": "number",
+          "description": "Z-hop height in mm",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "retract_before_travel": {
+          "type": "number",
+          "description": "Minimum travel distance before retraction in mm",
+          "minimum": 0,
+          "maximum": 20
+        }
+      }
+    }
+  }
+}

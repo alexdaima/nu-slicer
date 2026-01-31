@@ -1,0 +1,113 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "prusa-mini",
+  "brand": "prusa",
+  "model": "MINI",
+  "description": "Prusa MINI - Prusa FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "cartesian",
+  "build_volume": {
+    "x": 180,
+    "y": 180,
+    "z": 180,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "direct_drive",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "smooth_pei",
+      "textured_pei",
+      "satin_pei"
+    ],
+    "default_surface": "textured_pei",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 180.0,
+      "y": 180.0,
+      "z": 12.0,
+      "e": 80.0,
+      "travel": 180.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 2500.0,
+      "y": 2500.0,
+      "z": 400.0,
+      "e": 5000.0,
+      "extruding": 1250.0,
+      "retracting": 5000.0,
+      "travel": 3000.0
+    },
+    "max_jerk": {
+      "x": 8.0,
+      "y": 8.0,
+      "z": 0.2,
+      "e": 10.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": true,
+    "pressure_advance": true,
+    "input_shaping": true,
+    "arc_support": true,
+    "firmware_retraction": true,
+    "multi_material": true,
+    "filament_runout_sensor": true,
+    "power_loss_recovery": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "G1 E-1 F2100 ; retract\n{if max_layer_z < 180}G1 Z{min(max_layer_z+2, 180)} F720 ; Move print head up{endif}\nG1 X178 Y178 F4200 ; park print head\n{if max_layer_z < 180}G1 Z{min(max_layer_z+30, 180)} F720 ; Move print head further up{endif}\nG4 ; wait\nM104 S0 ; turn off temperature\nM140 S0 ; turn off heatbed\nM107 ; turn off fan\nM221 S100 ; reset flow\nM900 K0 ; reset LA\nM84 ; disable motors",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "hardened_steel",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.3,
+      "retraction": {
+        "length": 3.2,
+        "speed": 70.0,
+        "deretraction_speed": 30.0,
+        "z_hop": 0.4,
+        "minimum_travel": 1.5,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "G90 ; use absolute coordinates\nM83 ; extruder relative mode\nM104 S170 ; set extruder temp for bed leveling\nM140 S[bed_temperature_initial_layer_single] ; set bed temp\nM109 R170 ; wait for bed leveling temp\nM190 S[bed_temperature_initial_layer_single] ; wait for bed temp\nM204 T1250 ; set travel acceleration\nG28 ; home all without mesh bed level\nG29 ; mesh bed leveling \nM204 T[machine_max_acceleration_travel] ; restore travel acceleration\nM104 S[nozzle_temperature_initial_layer] ; set extruder temp\nG92 E0\nG1 Y-2 X179 F2400\nG1 Z3 F720\nM109 S[nozzle_temperature_initial_layer] ; wait for extruder temp\n\n; intro line\nG1 X170 F1000\nG1 Z0.2 F720\nG1 X110 E8 F900\nG1 X40 E10 F700\nG92 E0\n\nM221 S95 ; set flow"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "prusa",
+      "cartesian"
+    ]
+  }
+}

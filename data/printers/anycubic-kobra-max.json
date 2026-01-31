@@ -1,0 +1,107 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "anycubic-kobra-max",
+  "brand": "anycubic",
+  "model": "Kobra Max",
+  "description": "Anycubic Kobra Max - Anycubic FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "cartesian",
+  "build_volume": {
+    "x": 400,
+    "y": 400,
+    "z": 450,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "bowden",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "glass",
+      "ultrabase"
+    ],
+    "default_surface": "glass",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 300.0,
+      "y": 300.0,
+      "z": 40.0,
+      "e": 60.0,
+      "travel": 300.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 700.0,
+      "y": 600.0,
+      "z": 100.0,
+      "e": 3000.0,
+      "extruding": 4000.0,
+      "retracting": 1000.0,
+      "travel": 4000.0
+    },
+    "max_jerk": {
+      "x": 20.0,
+      "y": 20.0,
+      "z": 0.3,
+      "e": 5.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": false,
+    "pressure_advance": false,
+    "arc_support": true
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "M104 S0;extruder heater off\nM140 S0;heated bed heater off (if you have it)\nG91;relative positioning\nG1 Z+10 F3600 ;move Z up a bit\nG90;absolute positioning\nG1 X10 F3000; get the head off the bed\nG1 F3000 Y400 ;kick the bed out\nM84;steppers off\nM355 S0;turn off the case light",
+    "toolchange_gcode": "M601"
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "undefine",
+      "min_layer_height": 0.15,
+      "max_layer_height": 0.3,
+      "retraction": {
+        "length": 6.0,
+        "speed": 40.0,
+        "deretraction_speed": 40.0,
+        "z_hop": 0.4,
+        "minimum_travel": 5.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "M104 S140;start the nozzle preheat and don't wait\nG21;metric values\nG90;absolute positioning\nM82;set extruder to absolute mode\nM107;start with the fan off\nG28;home all\nM190 S[bed_temperature_initial_layer_single] ; set wait for bed temp\nM355 S1;turn on the case light\nM109 S[nozzle_temperature_initial_layer]; wait for extruder temp\nG1 Z15.0 F1000 ;move the nozzle up 15mm\nG92 E0;zero the extruded length\nG1 F100 E60;extrude 60mm of feed stock\nG92 E0;zero the extruded length again"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "anycubic",
+      "cartesian"
+    ]
+  }
+}

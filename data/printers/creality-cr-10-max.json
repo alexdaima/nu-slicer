@@ -1,0 +1,112 @@
+{
+  "$schema": "../schemas/printer.schema.json",
+  "id": "creality-cr-10-max",
+  "brand": "creality",
+  "model": "CR-10 Max",
+  "description": "Creality CR-10 Max - Creality FFF 3D Printer",
+  "source": {
+    "origin": "BambuStudio",
+    "version": "auto-converted",
+    "url": "https://github.com/bambulab/BambuStudio"
+  },
+  "technology": "FFF",
+  "structure": "cartesian",
+  "build_volume": {
+    "x": 450,
+    "y": 450,
+    "z": 470,
+    "origin": "corner"
+  },
+  "default_nozzle_diameter": 0.4,
+  "extruder": {
+    "type": "bowden",
+    "filament_diameter": 1.75,
+    "count": 1
+  },
+  "bed": {
+    "heated": true,
+    "surface_types": [
+      "glass",
+      "spring_steel"
+    ],
+    "default_surface": "glass",
+    "max_temperature": 100
+  },
+  "enclosure": {
+    "enclosed": false,
+    "heated_chamber": false,
+    "max_chamber_temperature": 40,
+    "air_filtration": false
+  },
+  "limits": {
+    "max_speed": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 10.0,
+      "e": 60.0,
+      "travel": 500.0,
+      "print": 300
+    },
+    "max_acceleration": {
+      "x": 500.0,
+      "y": 500.0,
+      "z": 100.0,
+      "e": 5000.0,
+      "extruding": 500.0,
+      "retracting": 1000.0,
+      "travel": 500.0
+    },
+    "max_jerk": {
+      "x": 8.0,
+      "y": 8.0,
+      "z": 0.4,
+      "e": 5.0
+    }
+  },
+  "features": {
+    "auto_bed_leveling": false,
+    "pressure_advance": false,
+    "input_shaping": false,
+    "arc_support": true,
+    "firmware_retraction": false,
+    "multi_material": false,
+    "filament_runout_sensor": false,
+    "power_loss_recovery": false
+  },
+  "cooling": {
+    "fan_count": 1,
+    "max_fan_speed": 100,
+    "auxiliary_fan": false
+  },
+  "gcode": {
+    "flavor": "marlin",
+    "end_gcode": "{if max_layer_z < printable_height}G1 Z{min(max_layer_z+2, printable_height)} F600 ; Move print head up{endif}\nG1 X5 Y{print_bed_max[1]*0.8} F{travel_speed*60} ; present print\n{if max_layer_z < printable_height-10}G1 Z{min(max_layer_z+70, printable_height-10)} F600 ; Move print head further up{endif}\n{if max_layer_z < printable_height*0.6}G1 Z{printable_height*0.6} F600 ; Move print head further up{endif}\nM140 S0 ; turn off heatbed\nM104 S0 ; turn off temperature\nM107 ; turn off fan\nM84 X Y E ; disable motors",
+    "toolchange_gcode": ""
+  },
+  "nozzle_configs": {
+    "0.4": {
+      "diameter": 0.4,
+      "nozzle_type": "undefine",
+      "min_layer_height": 0.08,
+      "max_layer_height": 0.32,
+      "retraction": {
+        "length": 5.0,
+        "speed": 60.0,
+        "deretraction_speed": 40.0,
+        "z_hop": 0.4,
+        "minimum_travel": 2.0,
+        "wipe": true,
+        "wipe_distance": 2.0
+      },
+      "start_gcode": "G90 ; use absolute coordinates\nM83 ; extruder relative mode\nM140 S[bed_temperature_initial_layer] ; set final bed temp\nM104 S150 ; set temporary nozzle temp to prevent oozing during homing\nG4 S10 ; allow partial nozzle warmup\nG28 ; home all axis\nG1 Z50 F240\nG1 X2 Y10 F3000\nM104 S[nozzle_temperature_initial_layer] ; set final nozzle temp\nM190 S[bed_temperature_initial_layer] ; wait for bed temp to stabilize\nM109 S[nozzle_temperature_initial_layer] ; wait for nozzle temp to stabilize\nG1 Z0.28 F240\nG92 E0\nG1 Y140 E10 F1500 ; prime the nozzle\nG1 X2.3 F5000\nG92 E0\nG1 Y10 E10 F1200 ; prime the nozzle\nG92 E0"
+    }
+  },
+  "metadata": {
+    "author": "BambuStudio Auto-Converter",
+    "license": "Apache-2.0",
+    "tags": [
+      "creality",
+      "cartesian"
+    ]
+  }
+}
