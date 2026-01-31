@@ -167,7 +167,7 @@ impl Default for SlicingParams {
     fn default() -> Self {
         Self {
             layer_height: 0.2,
-            first_layer_height: 0.3,
+            first_layer_height: 0.2,
             min_layer_height: 0.07,
             max_layer_height: 0.3,
             mode: SlicingMode::Regular,
@@ -220,7 +220,7 @@ mod tests {
     fn test_slicing_params_default() {
         let params = SlicingParams::default();
         assert!((params.layer_height - 0.2).abs() < 1e-6);
-        assert!((params.first_layer_height - 0.3).abs() < 1e-6);
+        assert!((params.first_layer_height - 0.2).abs() < 1e-6);
         assert!(params.is_valid());
     }
 

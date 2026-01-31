@@ -244,7 +244,7 @@ impl Default for PrintConfig {
 
             // Layer heights
             layer_height: 0.2,
-            first_layer_height: 0.3,
+            first_layer_height: 0.2,
 
             // Speeds
             print_speed: 50.0,

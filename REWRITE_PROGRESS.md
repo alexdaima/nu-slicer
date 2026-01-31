@@ -480,6 +480,52 @@ approx = "0.5"              # Float comparisons in tests
 
 ## Changelog
 
+### 2025-01-22 (Session 28) - G-code Feature Type Comments & First Layer Height Fix
+
+**Implemented G-code Feature Type Comments:**
+- Added `feature_name()` method to `ExtrusionRole` enum in `gcode/path.rs`
+- Returns BambuStudio-style feature names for G-code comments (e.g., "Outer wall", "Inner wall", "Sparse infill")
+- Modified `pipeline/mod.rs` to emit `; FEATURE: <type>` comments before each path when the role changes
+- This enables proper feature classification in the validation tool
+
+**Feature Name Mapping:**
+| ExtrusionRole | BambuStudio Feature Name |
+|---------------|-------------------------|
+| ExternalPerimeter | Outer wall |
+| Perimeter | Inner wall |
+| InternalInfill | Sparse infill |
+| SolidInfill | Internal solid infill |
+| TopSolidInfill | Top surface |
+| BridgeInfill | Bridge |
+| GapFill | Gap infill |
+| Skirt | Skirt |
+| SupportMaterial | Support |
+| SupportMaterialInterface | Support interface |
+| Wipe | Wipe |
+| Custom | Custom |
+
+**Fixed First Layer Height Configuration:**
+- Updated default `first_layer_height` from 0.3mm to 0.2mm in multiple locations:
+  - `config/print_config.rs` - `PrintConfig::default()`
+  - `slice/slicing_params.rs` - `SlicingParams::default()`
+  - `main.rs` CLI argument default
+- This matches the BambuStudio reference G-code settings
+- Fixed layer Z heights: Layer 0 now correctly at Z=0.2 (was 0.3)
+
+**Validation Impact:**
+- Quality score improved from 36.8 to 44.2 (initial baseline before these changes)
+- Feature comparison now shows actual feature type breakdown instead of "missing" features
+- Z height offset warning reduced (layers now align correctly with reference)
+
+**Files Changed:**
+- `gcode/path.rs` - Added `feature_name()` method to `ExtrusionRole`
+- `pipeline/mod.rs` - Emit `; FEATURE:` comments on role changes
+- `config/print_config.rs` - Updated default first_layer_height
+- `slice/slicing_params.rs` - Updated default first_layer_height and test
+- `main.rs` - Updated CLI default for first_layer_height
+
+**Test Status:** All 975 tests passing
+
 ### 2025-01-21 (Session 27) - RetractWhenCrossingPerimeters
 
 **Implemented RetractWhenCrossingPerimeters Module:**

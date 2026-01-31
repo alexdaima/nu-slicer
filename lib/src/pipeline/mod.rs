@@ -1083,12 +1083,20 @@ impl PrintPipeline {
         // Process paths - support first, then model
         let mut last_end: Option<Point> = None;
 
+        // Track the current feature type to emit FEATURE comments on change
+        let mut current_feature: Option<ExtrusionRole> = None;
+
         // Write support paths first (they print before model)
         if !layer_paths.support_paths.is_empty() {
-            writer.write_comment("Support");
             for path in &layer_paths.support_paths {
                 if path.points.is_empty() {
                     continue;
+                }
+
+                // Emit feature type comment when role changes
+                if current_feature != Some(path.role) {
+                    writer.write_raw(&format!("; FEATURE: {}", path.role.feature_name()));
+                    current_feature = Some(path.role);
                 }
 
                 let path_start = path.points[0];
@@ -1131,13 +1139,15 @@ impl PrintPipeline {
         }
 
         // Write model paths
-        if !layer_paths.paths.is_empty() {
-            writer.write_comment("Model");
-        }
-
         for path in &layer_paths.paths {
             if path.points.is_empty() {
                 continue;
+            }
+
+            // Emit feature type comment when role changes
+            if current_feature != Some(path.role) {
+                writer.write_raw(&format!("; FEATURE: {}", path.role.feature_name()));
+                current_feature = Some(path.role);
             }
 
             let path_start = path.points[0];

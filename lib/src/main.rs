@@ -79,7 +79,7 @@ enum Commands {
         layer_height: f64,
 
         /// First layer height in mm
-        #[arg(long, default_value = "0.3")]
+        #[arg(long, default_value = "0.2")]
         first_layer_height: f64,
 
         /// Number of perimeters

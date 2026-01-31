@@ -105,6 +105,27 @@ impl ExtrusionRole {
             ExtrusionRole::Custom => "custom",
         }
     }
+
+    /// Get the BambuStudio-style feature name for G-code comments.
+    ///
+    /// This returns the exact string format used by BambuStudio in
+    /// `; FEATURE: <name>` comments, which is expected by validation tools.
+    pub fn feature_name(&self) -> &'static str {
+        match self {
+            ExtrusionRole::ExternalPerimeter => "Outer wall",
+            ExtrusionRole::Perimeter => "Inner wall",
+            ExtrusionRole::InternalInfill => "Sparse infill",
+            ExtrusionRole::SolidInfill => "Internal solid infill",
+            ExtrusionRole::TopSolidInfill => "Top surface",
+            ExtrusionRole::BridgeInfill => "Bridge",
+            ExtrusionRole::GapFill => "Gap infill",
+            ExtrusionRole::Skirt => "Skirt",
+            ExtrusionRole::SupportMaterial => "Support",
+            ExtrusionRole::SupportMaterialInterface => "Support interface",
+            ExtrusionRole::Wipe => "Wipe",
+            ExtrusionRole::Custom => "Custom",
+        }
+    }
 }
 
 /// A single extrusion path ready for G-code generation.
