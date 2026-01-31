@@ -2,7 +2,7 @@
 
 Comprehensive tracking document for the BambuStudio/libslic3r → Rust rewrite.
 
-**Last Updated:** 2025-01-21 (Session 27)
+**Last Updated:** 2025-01-22 (Session 29)
 
 ---
 
@@ -479,6 +479,43 @@ approx = "0.5"              # Float comparisons in tests
 ---
 
 ## Changelog
+
+### 2025-01-22 (Session 29) - Extrusion Width Fix & Layer Marker Detection Improvements
+
+**Fixed Critical Perimeter Width Calculation Bug:**
+- In `pipeline/mod.rs` `path_config()`, the perimeter width was incorrectly calculated as:
+  `perimeters_count * nozzle_diameter` (e.g., 3 * 0.4 = 1.2mm)
+- Corrected to: `nozzle_diameter * 1.125` (e.g., 0.4 * 1.125 = 0.45mm)
+- Also fixed `infill_width` from `nozzle_diameter * 1.2` to `nozzle_diameter * 1.125`
+- This bug was causing ~3x over-extrusion in generated G-code
+
+**Fixed G-code Layer Marker Detection:**
+- Fixed false positive matching of "First layer:" substring in comment lines
+- Changed `is_layer_marker()` to check for `"; LAYER:"` or `"; layer:"` at start of comment content
+- Removed redundant `"; layer num/total_layer_count:"` pattern (BambuStudio emits both this and `"; CHANGE_LAYER"` for each layer, causing double-counting)
+- Now only matches `"; CHANGE_LAYER"` for BambuStudio format
+
+**Layer Marker Detection Patterns (Updated):**
+| Pattern | Slicer | Example |
+|---------|--------|---------|
+| `; LAYER:N` | PrusaSlicer/Cura | `; LAYER:0` |
+| `; Layer N, Z = X.XXX` | Rust Slicer | `; Layer 0, Z = 0.200` |
+| `; CHANGE_LAYER` | BambuStudio | `; CHANGE_LAYER` |
+
+**Validation Impact:**
+- Quality score improved from 44.2 to 67.2 (with matching infill density of 15%)
+- Layer count now matches exactly (240 vs 240)
+- Total extrusion difference reduced from +100.7% to +29.1%
+- Per-layer extrusion differences significantly reduced
+
+**Remaining Issues:**
+- Still ~29% higher total extrusion than reference (deeper algorithm differences)
+- Different perimeter count defaults (we use 3, reference uses 2)
+- Reference uses flow ratio of 0.98 vs our default of 1.0
+
+**Files Changed:**
+- `pipeline/mod.rs` - Fixed `path_config()` perimeter and infill width calculations
+- `gcode/compare.rs` - Fixed `is_layer_marker()` to avoid false positives and double-counting
 
 ### 2025-01-22 (Session 28) - G-code Feature Type Comments & First Layer Height Fix
 

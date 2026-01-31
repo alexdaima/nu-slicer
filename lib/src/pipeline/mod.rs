@@ -320,9 +320,10 @@ impl PipelineConfig {
     /// Get the path configuration from the pipeline config.
     pub fn path_config(&self) -> PathConfig {
         PathConfig {
-            perimeter_width: self.object.perimeters as f64 * self.print.nozzle_diameter,
+            // Perimeter width is typically ~1.125x nozzle diameter (not perimeters count!)
+            perimeter_width: self.print.nozzle_diameter * 1.125,
             external_perimeter_width: self.print.nozzle_diameter * 1.05,
-            infill_width: self.print.nozzle_diameter * 1.2,
+            infill_width: self.print.nozzle_diameter * 1.125,
             layer_height: self.slicing.layer_height,
             first_layer_height: self.slicing.first_layer_height,
             perimeter_speed: self.object.perimeter_speed,

@@ -566,13 +566,37 @@ impl ParsedGCode {
     /// Check if a comment line is a layer marker
     fn is_layer_marker(trimmed: &str) -> bool {
         // Supported formats:
-        //   - "; LAYER:N" or "; layer:N" (PrusaSlicer/Cura style)
+        //   - "; LAYER:N" or ";LAYER:N" (PrusaSlicer/Cura style)
         //   - "; Layer N, Z = X.XXX" (our slicer format)
-        //   - "; layer num/total_layer_count: N/M" (BambuStudio format)
-        trimmed.contains("LAYER:")
-            || trimmed.contains("layer:")
-            || (trimmed.starts_with("; Layer ") && trimmed.contains(", Z ="))
-            || trimmed.starts_with("; layer num/total_layer_count:")
+        //   - "; CHANGE_LAYER" (BambuStudio format)
+        //
+        // Note: We must be careful not to match substrings like "First layer:" in
+        // comment lines like "; Layer height: 0.20mm, First layer: 0.20mm"
+        //
+        // Note: BambuStudio uses both "; CHANGE_LAYER" and "; layer num/total_layer_count:"
+        // for each layer. We only match "; CHANGE_LAYER" to avoid double-counting layers.
+
+        // Check for PrusaSlicer/Cura style: "; LAYER:" or ";LAYER:" at start
+        let after_semicolon = trimmed.strip_prefix(';').map(|s| s.trim_start());
+        if let Some(content) = after_semicolon {
+            if content.starts_with("LAYER:") || content.starts_with("layer:") {
+                return true;
+            }
+        }
+
+        // Check for our slicer format: "; Layer N, Z = X.XXX"
+        if trimmed.starts_with("; Layer ") && trimmed.contains(", Z =") {
+            return true;
+        }
+
+        // Check for BambuStudio format: "; CHANGE_LAYER"
+        // Note: We intentionally do NOT match "; layer num/total_layer_count:" because
+        // BambuStudio emits both markers for each layer, and we want to avoid double-counting.
+        if trimmed == "; CHANGE_LAYER" {
+            return true;
+        }
+
+        false
     }
 
     /// Parse E value from a G92 command (e.g., "G92 E0" or "G92 E-1.5")
