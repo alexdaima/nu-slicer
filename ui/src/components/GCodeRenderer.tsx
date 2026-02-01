@@ -33,28 +33,21 @@ function getCachedColor(colorHex: string): THREE.Color {
 }
 
 /**
- * Tube-based renderer - renders extrusions as 3D cylinders
- * Similar to BambuStudio/OrcaSlicer visualization
+ * Efficient instanced cylinder renderer for G-code segments
+ * Uses THREE.InstancedMesh for maximum performance
  */
-const GCodeTubes: React.FC<GCodeRendererProps & { 
-  showSeams?: boolean;
-  tubeResolution?: number;
-}> = ({
+const GCodeTubes: React.FC<GCodeRendererProps> = ({
   parsedGCode,
   visibleLayerRange,
   showTravelMoves = false,
-  segmentLimit = 500000, // Increased for arc-interpolated segments
-  showSeams = true,
-  tubeResolution = 6, // Number of segments around the cylinder (6 = hexagon, 8 = octagon)
 }) => {
-  // Group segments by feature type and prepare instanced data
+  // Process segments into instanced data by feature
   const instancesByFeature = useMemo(() => {
     const instances = new Map<FeatureType, {
       matrices: THREE.Matrix4[];
       colors: THREE.Color[];
     }>();
     
-    let segmentCount = 0;
     const up = new THREE.Vector3(0, 1, 0);
     const position = new THREE.Vector3();
     const scale = new THREE.Vector3();
@@ -67,20 +60,17 @@ const GCodeTubes: React.FC<GCodeRendererProps & {
     layerZValues.forEach((z, index) => layerZMap.set(z, index));
 
     for (const segment of parsedGCode.segments) {
-      if (segmentCount >= segmentLimit) break;
-
-      // Filter by layer range - use the exact Z from the segment's start
+      // Filter by layer range
       if (visibleLayerRange) {
         const [minLayer, maxLayer] = visibleLayerRange;
-        // Round Z to nearest layer Z with tolerance
         const zRounded = Math.round(segment.start.z * 1000) / 1000;
         const layerIndex = layerZMap.get(zRounded) ?? -1;
         if (layerIndex < minLayer || layerIndex > maxLayer) continue;
       }
 
-      // Only render actual extrusion moves as tubes
-      // Skip travels, retracts, and unretracts
-      if (segment.type !== 'extrude') continue;
+      // Include extrude moves and travel moves for outer-wall (to fill gaps)
+      const isOuterWallTravel = segment.featureType === 'outer-wall' && segment.type !== 'extrude';
+      if (segment.type !== 'extrude' && !isOuterWallTravel) continue;
 
       const feature = segment.featureType || 'custom';
       if (!instances.has(feature)) {
@@ -113,125 +103,73 @@ const GCodeTubes: React.FC<GCodeRendererProps & {
       const direction = new THREE.Vector3(dx, dy, dz).normalize();
       quaternion.setFromUnitVectors(up, direction);
 
-      // Scale: radius based on extrusion width, length based on segment length
-      const radius = (segment.extrusionWidth || 0.4) / 2;
+      // Scale: thin radius for outer-wall travel moves, full width for extrusions
+      const isTravel = segment.type !== 'extrude';
+      const radius = isTravel ? 0.05 : (segment.extrusionWidth || 0.4) / 2;
       scale.set(radius, length, radius);
 
       // Build matrix
       matrix.compose(position, quaternion, scale);
       featureData.matrices.push(matrix.clone());
 
-      // Color with optional seam highlight
+      // Color
       const baseColor = getCachedColor(FEATURE_COLORS[feature]);
-      const color = baseColor.clone();
-      
-      // Highlight retraction/unretraction points as seams
-      if (showSeams && (segment.type === 'retract' || segment.type === 'unretract')) {
-        color.multiplyScalar(0.5); // Darken for seams
-      }
-      
-      featureData.colors.push(color);
-      segmentCount++;
+      featureData.colors.push(baseColor.clone());
     }
 
     return instances;
-  }, [parsedGCode, visibleLayerRange, segmentLimit, showSeams]);
+  }, [parsedGCode, visibleLayerRange]);
 
   // Build instanced meshes for each feature
   const instancedMeshes = useMemo(() => {
     const meshes: Array<{
-      geometry: THREE.CylinderGeometry;
-      material: THREE.MeshStandardMaterial;
-      count: number;
-      matrices: THREE.Matrix4[];
-      colors: THREE.Color[];
+      mesh: THREE.InstancedMesh;
       feature: FeatureType;
     }> = [];
+
+    const cylinderGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1);
 
     for (const [feature, data] of instancesByFeature) {
       if (data.matrices.length === 0) continue;
 
-      // Create geometry - cylinder oriented along Y axis (default)
-      // CylinderGeometry(radiusTop, radiusBottom, height, radialSegments)
-      const geometry = new THREE.CylinderGeometry(1, 1, 1, tubeResolution, 1);
-
-      // Create material with appropriate opacity
       const opacity = FEATURE_OPACITY[feature];
       const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff, // Will use instance colors
+        color: 0xffffff,
         roughness: 0.4,
         metalness: 0.1,
         transparent: opacity < 1,
         opacity: opacity,
       });
 
-      meshes.push({
-        geometry,
+      const instancedMesh = new THREE.InstancedMesh(
+        cylinderGeo,
         material,
-        count: data.matrices.length,
-        matrices: data.matrices,
-        colors: data.colors,
-        feature,
-      });
+        data.matrices.length
+      );
+
+      // Set matrices and colors
+      for (let i = 0; i < data.matrices.length; i++) {
+        instancedMesh.setMatrixAt(i, data.matrices[i]);
+        instancedMesh.setColorAt(i, data.colors[i]);
+      }
+      
+      instancedMesh.instanceMatrix.needsUpdate = true;
+      if (instancedMesh.instanceColor) {
+        instancedMesh.instanceColor.needsUpdate = true;
+      }
+
+      meshes.push({ mesh: instancedMesh, feature });
     }
 
     return meshes;
-  }, [instancesByFeature, tubeResolution]);
+  }, [instancesByFeature]);
 
   return (
     <group>
-      {instancedMeshes.map((meshData) => (
-        <InstancedTubeMesh key={meshData.feature} {...meshData} />
+      {instancedMeshes.map((item, index) => (
+        <primitive key={`${item.feature}-${index}`} object={item.mesh} />
       ))}
     </group>
-  );
-};
-
-/**
- * Individual instanced mesh component
- * Updates matrices and colors in a useLayoutEffect
- */
-interface InstancedTubeMeshProps {
-  geometry: THREE.CylinderGeometry;
-  material: THREE.MeshStandardMaterial;
-  count: number;
-  matrices: THREE.Matrix4[];
-  colors: THREE.Color[];
-  feature: FeatureType;
-}
-
-const InstancedTubeMesh: React.FC<InstancedTubeMeshProps> = ({
-  geometry,
-  material,
-  count,
-  matrices,
-  colors,
-}) => {
-  const meshRef = React.useRef<THREE.InstancedMesh>(null);
-
-  React.useLayoutEffect(() => {
-    if (!meshRef.current) return;
-
-    const mesh = meshRef.current;
-    
-    for (let i = 0; i < count; i++) {
-      mesh.setMatrixAt(i, matrices[i]);
-      mesh.setColorAt(i, colors[i]);
-    }
-    
-    mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) {
-      mesh.instanceColor.needsUpdate = true;
-    }
-  }, [count, matrices, colors]);
-
-  return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geometry, material, count]}
-      castShadow
-      receiveShadow
-    />
   );
 };
 
@@ -252,11 +190,7 @@ const GCodeLineSegments: React.FC<GCodeRendererProps> = ({
     const groups = new Map<FeatureType, GCodeSegment[]>();
     
     let segmentCount = 0;
-    
-    // Build a map of Z values to layer indices for faster lookup
-    const layerZMap = new Map<number, number>();
-    const layerZValues = Array.from(parsedGCode.layers.keys()).sort((a, b) => a - b);
-    layerZValues.forEach((z, index) => layerZMap.set(z, index));
+    const layerZValues = Array.from(parsedGCode.layers.keys());
     
     for (const segment of parsedGCode.segments) {
       if (segmentCount >= segmentLimit) break;
@@ -264,8 +198,7 @@ const GCodeLineSegments: React.FC<GCodeRendererProps> = ({
       // Filter by layer range
       if (visibleLayerRange) {
         const [minLayer, maxLayer] = visibleLayerRange;
-        const zRounded = Math.round(segment.start.z * 1000) / 1000;
-        const layerIndex = layerZMap.get(zRounded) ?? -1;
+        const layerIndex = layerZValues.findIndex(z => Math.abs(z - segment.start.z) < 0.001);
         if (layerIndex < minLayer || layerIndex > maxLayer) continue;
       }
 
@@ -293,7 +226,7 @@ const GCodeLineSegments: React.FC<GCodeRendererProps> = ({
     for (const [feature, segments] of segmentsByFeature) {
       if (segments.length === 0) continue;
 
-      const positions = new Float32Array(segments.length * 6); // 2 points * 3 coordinates
+      const positions = new Float32Array(segments.length * 6);
       
       for (let i = 0; i < segments.length; i++) {
         const seg = segments[i];
@@ -335,7 +268,6 @@ const GCodeLineSegments: React.FC<GCodeRendererProps> = ({
  * Travel moves renderer (always uses lines)
  */
 const TravelMoves: React.FC<GCodeRendererProps> = (props) => {
-  // Filter to only travel moves
   const travelProps = {
     ...props,
     showTravelMoves: true,
@@ -345,7 +277,7 @@ const TravelMoves: React.FC<GCodeRendererProps> = (props) => {
 };
 
 /**
- * Progressive LOD renderer - switches between tubes and lines based on camera distance
+ * Progressive LOD renderer
  */
 const GCodeLOD: React.FC<GCodeRendererProps> = (props) => {
   const { camera } = useThree();
@@ -373,28 +305,18 @@ const GCodeLOD: React.FC<GCodeRendererProps> = (props) => {
     }
   });
 
-  // Adjust segment limit based on detail level
   const segmentLimit = useMemo(() => {
     switch (detailLevel) {
-      case 'high': return 100000;
-      case 'medium': return 50000;
+      case 'high': return 300000;
+      case 'medium': return 100000;
       case 'low': return 25000;
-      default: return 50000;
-    }
-  }, [detailLevel]);
-
-  const tubeResolution = useMemo(() => {
-    switch (detailLevel) {
-      case 'high': return 8;
-      case 'medium': return 6;
-      case 'low': return 4;
-      default: return 6;
+      default: return 100000;
     }
   }, [detailLevel]);
 
   return (
     <>
-      <GCodeTubes {...props} segmentLimit={segmentLimit} tubeResolution={tubeResolution} />
+      <GCodeTubes {...props} />
       {props.showTravelMoves && <TravelMoves {...props} segmentLimit={10000} />}
     </>
   );
@@ -429,14 +351,12 @@ const BoundingBox: React.FC<{ parsedGCode: ParsedGCode }> = ({ parsedGCode }) =>
 interface GCodeSceneProps extends GCodeRendererProps {
   showBoundingBox?: boolean;
   renderMode?: 'tubes' | 'lines' | 'lod';
-  tubeResolution?: number;
 }
 
 export const GCodeScene: React.FC<GCodeSceneProps> = ({
   parsedGCode,
   showBoundingBox = true,
   renderMode = 'tubes',
-  tubeResolution = 6,
   visibleLayerRange,
   lineWidth,
   showTravelMoves,
@@ -461,7 +381,7 @@ export const GCodeScene: React.FC<GCodeSceneProps> = ({
       case 'tubes':
         return (
           <>
-            <GCodeTubes {...commonProps} tubeResolution={tubeResolution} />
+            <GCodeTubes {...commonProps} />
             {showTravelMoves && <TravelMoves {...commonProps} segmentLimit={50000} />}
           </>
         );
@@ -472,18 +392,17 @@ export const GCodeScene: React.FC<GCodeSceneProps> = ({
       default:
         return (
           <>
-            <GCodeTubes {...commonProps} tubeResolution={tubeResolution} />
+            <GCodeTubes {...commonProps} />
             {showTravelMoves && <TravelMoves {...commonProps} segmentLimit={50000} />}
           </>
         );
     }
-  }, [renderMode, parsedGCode, visibleLayerRange, lineWidth, showTravelMoves, segmentLimit, tubeResolution]);
+  }, [renderMode, parsedGCode, visibleLayerRange, lineWidth, showTravelMoves, segmentLimit]);
 
   return (
     <>
       <color attach="background" args={['#1a1a1a']} />
       
-      {/* Lighting setup for 3D tubes */}
       <ambientLight intensity={0.4} />
       <directionalLight 
         position={[50, 50, 50]} 
@@ -497,7 +416,6 @@ export const GCodeScene: React.FC<GCodeSceneProps> = ({
       />
       <pointLight position={[0, 0, 50]} intensity={0.5} />
       
-      {/* Rotate -90° on X to make Z point up (Y in Three.js space) */}
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <group position={[-center[0], -center[1], -center[2]]}>
           {renderContent}
@@ -572,9 +490,9 @@ export const GCodeViewer: React.FC<GCodeViewerProps> = ({
       <Canvas
         camera={{
           position: [
-            modelSize * 1.5,
-            modelSize * 1.5,
-            modelSize * 2,
+            modelSize * 0.7,
+            modelSize * 1.0,
+            modelSize * 0.7,
           ],
           fov: 50,
           near: 0.1,

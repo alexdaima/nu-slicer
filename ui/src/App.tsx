@@ -164,8 +164,11 @@ const App: FC = () => {
       {/* Top Bar - Stats */}
       <header className="topbar">
         <div className="stats-group">
-          <span><strong>Segments:</strong> {parsedGCode.segments.length.toLocaleString()}</span>
+          <span><strong>Total:</strong> {parsedGCode.segments.length.toLocaleString()}</span>
           <span><strong>Layers:</strong> {parsedGCode.totalLayers}</span>
+          <span style={{color: '#FF6B6B'}}><strong>Outer:</strong> {parsedGCode.segments.filter(s => s.featureType === 'outer-wall').length.toLocaleString()}</span>
+          <span style={{color: '#4ECDC4'}}><strong>Inner:</strong> {parsedGCode.segments.filter(s => s.featureType === 'inner-wall').length.toLocaleString()}</span>
+          <span style={{color: '#96CEB4'}}><strong>Infill:</strong> {parsedGCode.segments.filter(s => s.featureType === 'infill').length.toLocaleString()}</span>
         </div>
         <div className="bounds-display">
           <span>X: {parsedGCode.bounds.min.x.toFixed(1)} - {parsedGCode.bounds.max.x.toFixed(1)} mm</span>
