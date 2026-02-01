@@ -432,7 +432,9 @@ impl PerimeterGenerator {
         // further reduce points during G-code generation. Using 0.2× was too aggressive.
         let simplified_slices = if self.config.surface_simplify_resolution > 0.0 {
             let resolution = if self.config.arc_fitting_enabled {
-                self.config.surface_simplify_resolution * 0.5
+                // BambuStudio uses 0.2× resolution when arc fitting is enabled
+                // Reference: PerimeterGenerator.cpp line 909
+                self.config.surface_simplify_resolution * 0.2
             } else {
                 self.config.surface_simplify_resolution
             };

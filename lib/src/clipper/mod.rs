@@ -193,7 +193,14 @@ pub fn union(subject: &[ExPolygon], clip: &[ExPolygon]) -> ExPolygons {
     let clip_geo = expolygons_to_geo_multi(clip);
 
     let result = subject_geo.union(&clip_geo, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Compute the union of a single set of potentially overlapping polygons.
@@ -226,7 +233,15 @@ pub fn union_polygons_ex(polygons: &[Polygon]) -> ExPolygons {
 
     // Union with itself to merge overlapping polygons and establish proper holes
     let result = geo_multi.union(&geo_multi, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // CRITICAL: Ensure canonical winding order (CCW for contours, CW for holes)
+    // This is essential for arc fitting to generate both G2 and G3 arcs correctly
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Compute the intersection of two sets of polygons.
@@ -239,7 +254,14 @@ pub fn intersection(subject: &[ExPolygon], clip: &[ExPolygon]) -> ExPolygons {
     let clip_geo = expolygons_to_geo_multi(clip);
 
     let result = subject_geo.intersection(&clip_geo, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Compute the difference of two sets of polygons (subject - clip).
@@ -255,7 +277,14 @@ pub fn difference(subject: &[ExPolygon], clip: &[ExPolygon]) -> ExPolygons {
     let clip_geo = expolygons_to_geo_multi(clip);
 
     let result = subject_geo.difference(&clip_geo, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Compute the XOR of two sets of polygons.
@@ -271,7 +300,14 @@ pub fn xor(subject: &[ExPolygon], clip: &[ExPolygon]) -> ExPolygons {
     let clip_geo = expolygons_to_geo_multi(clip);
 
     let result = subject_geo.xor(&clip_geo, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 // ============================================================================
@@ -294,7 +330,14 @@ pub fn offset_polygon(polygon: &Polygon, delta: CoordF, join_type: OffsetJoinTyp
     let jt = join_type.into();
 
     let result = geo_poly.offset(delta, jt, EndType::ClosedPolygon, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Offset an ExPolygon by a given distance.
@@ -309,7 +352,14 @@ pub fn offset_expolygon(
     let jt = join_type.into();
 
     let result = geo_poly.offset(delta, jt, EndType::ClosedPolygon, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Offset multiple ExPolygons by a given distance.
@@ -328,7 +378,14 @@ pub fn offset_expolygons(
     let jt = join_type.into();
 
     let result = geo_multi.offset(delta, jt, EndType::ClosedPolygon, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Offset multiple Polygons by a given distance.
@@ -345,7 +402,14 @@ pub fn offset_polygons(
     let jt = join_type.into();
 
     let result = geo_multi.offset(delta, jt, EndType::ClosedPolygon, 1000.0);
-    geo_multi_to_expolygons(&result)
+    let mut expolygons = geo_multi_to_expolygons(&result);
+
+    // Ensure canonical winding order
+    for expoly in &mut expolygons {
+        expoly.make_canonical();
+    }
+
+    expolygons
 }
 
 /// Shrink (inset) ExPolygons by a given distance.
